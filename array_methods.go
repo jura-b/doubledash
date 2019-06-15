@@ -40,4 +40,22 @@ func (array *Array) Filter(filterFunc func(item interface{}, index int) bool) Ar
 	return Filter(array, filterFunc)
 }
 
+func (array *Array) Chunk(chunkSize int) Array {
+	return Chunk(array, chunkSize)
+}
 
+func (array *Array) Concat(elements ...interface{}) {
+	Concat(array, elements)
+}
+
+func (array *Array) Fill(item interface{}, startIndex, endIndex int) {
+	Fill(array, item, startIndex, endIndex)
+}
+
+func (array *Array) HasIndex(index int) bool {
+	return HasIndex(array, index)
+}
+
+func (array *Array) GetAt(index int) interface{} {
+	return GetAt(array, index)
+}

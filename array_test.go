@@ -151,3 +151,21 @@ func TestFill(t *testing.T) {
 		})
 	})
 }
+
+func TestFlatten(t *testing.T) {
+	arr := NewEmptyArray()
+	arr.Push(1)
+	arr.Push("A")
+	arr.Push(NewArray([]string{"hello", "world"}))
+	arr.Push(NewArray([]int{5, 6, 7}))
+
+	arr = Flatten(&arr)
+	assert.Len(t, arr, 7)
+	assert.Equal(t, 1, arr.GetAt(0))
+	assert.Equal(t, "A", arr.GetAt(1))
+	assert.Equal(t, "hello", arr.GetAt(2))
+	assert.Equal(t, "world", arr.GetAt(3))
+	assert.Equal(t, 5, arr.GetAt(4))
+	assert.Equal(t, 6, arr.GetAt(5))
+	assert.Equal(t, 7, arr.GetAt(6))
+}

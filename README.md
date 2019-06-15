@@ -1,1 +1,2 @@
-doubledash
+#DoubleDash
+Inspired by lodash

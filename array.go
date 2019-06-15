@@ -93,7 +93,25 @@ func Find(array *Array, findFunc func(item interface{}, index int) bool) interfa
 	return nil
 }
 
-func Chunk(array Array, chunkSize int) Array {
+func FindIndex(array *Array, findFunc func(item interface{}, index int) bool) int {
+	for i, value := range array.Iterable() {
+		if findFunc(value, i) {
+			return i
+		}
+	}
+	return -1
+}
+
+func Includes(array *Array, targetValue interface{}) bool {
+	for _, value := range array.Iterable() {
+		if value == targetValue {
+			return true
+		}
+	}
+	return false
+}
+
+func Chunk(array *Array, chunkSize int) Array {
 	if chunkSize == 0 {
 		panic("chunk size must be greater than 0")
 	}
@@ -125,7 +143,11 @@ func Concat(array *Array, elements ...interface{}) {
 
 // This func mutates array
 func Fill(array *Array, item interface{}, startIndex, endIndex int) {
-	if startIndex > endIndex || startIndex >= len(*array) || endIndex >= len(*array) {
+	if startIndex > endIndex ||
+		startIndex < 0 ||
+		endIndex < 0 ||
+		startIndex >= len(*array) ||
+		endIndex >= len(*array) {
 		panic("invalid start/end index")
 	}
 
@@ -138,4 +160,78 @@ func Fill(array *Array, item interface{}, startIndex, endIndex int) {
 	})
 
 	*array = resultArr
+}
+
+func HasIndex(array *Array, index int) bool {
+	if index < len(*array) {
+		return true
+	}
+	return false
+}
+
+func GetAt(array *Array, index int) interface{} {
+	if HasIndex(array, index) {
+		arr := array.InterfaceArray()
+		return arr[index]
+	}
+
+	panic("index out of range")
+}
+
+func Flatten(array *Array) Array {
+	resultArr := NewEmptyArray()
+	for _, value := range array.Iterable() {
+		switch reflect.TypeOf(value).Kind() {
+		case reflect.Array, reflect.Slice:
+			vSlice := reflect.ValueOf(value)
+			for j := 0; j < vSlice.Len(); j++ {
+				resultArr.Push(vSlice.Index(j).Interface())
+			}
+		default:
+			resultArr.Push(value)
+		}
+	}
+	return resultArr
+}
+
+func Union(arrays ...*Array) Array {
+	if len(arrays) < 2 {
+		panic("at least 2 arrays required")
+	}
+
+	resultArr := NewEmptyArray()
+
+	for _, array := range arrays {
+		for _, value := range array.Iterable() {
+			if Includes(array, value) {
+				resultArr.Push(value)
+			}
+		}
+	}
+
+	return resultArr
+}
+
+func Intersection(arrays ...*Array) Array {
+	if len(arrays) < 2 {
+		panic("at least 2 arrays required")
+	}
+
+	resultArr := NewEmptyArray()
+	intersectionCount := map[interface{}]int{}
+
+	for _, array := range arrays {
+		for _, value := range array.Iterable() {
+			_, ok := intersectionCount[value]
+			if !ok {
+				intersectionCount[value] = 0
+			}
+
+			intersectionCount[value]++
+
+			if intersectionCount[value] == 
+		}
+	}
+
+	return resultArr
 }
